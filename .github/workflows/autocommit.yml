@@ -6,6 +6,7 @@ on:
       - main
   schedule:
     - cron: "*/30 * * * *" #  */5 * * * *
+  workflow_dispatch:
 
 jobs:
   auto_commit:
@@ -21,8 +22,8 @@ jobs:
 
       - name: Modify last update
         run: |
-          d=$(date '+%Y-%m-%dT%H:%M:%SZ')
-          echo $d > LAST_UPDATED
+          d=$(TZ='America/New_York' date '+%Y-%m-%d %H:%M:%S %Z')
+          echo "$d" > LAST_UPDATED
 
       - name: Configure Git
         run: |
@@ -45,7 +46,7 @@ jobs:
           arr=("melon(bot): 😂 auto commit" "melon(bot): 😱 auto commit" "melon(bot): 👿 auto commit" "melon(bot): 🫠 auto commit" "melon(bot): 🤧 auto commit" "melon(bot): 💀 auto commit" "melon(bot): 😭 auto commit" "melon(bot): 🤖 auto commit" "melon(bot): 😅 auto commit" "melon(bot): 👻 auto commit")
           rand=$((RANDOM % ${#arr[@]}))
           
-          git commit -m "${arr[$rand]}"
+          git commit -m "${arr[$rand]}" || echo "No changes to commit"
 
       - name: GitHub Push
         uses: ad-m/github-push-action@v0.6.0
